@@ -37,6 +37,7 @@ function getColorDeaths(d) {
                         '#FFEDA0';
 }
 
+//fecthes data from the source and calls load_country_data on the json file
 function get_data() {
     fetch("https://pomber.github.io/covid19/timeseries.json")
         .then(response => response.json())
@@ -47,6 +48,7 @@ function get_data() {
         .catch(err => console.error(err));
 }
 
+//creates a Country object from each key in the json data fetched and appends the object to an array.
 function load_country_data(data) {
     let json_Length = Object.keys(data).length; //amount of countrys
     let c_keys = Object.keys(data); //list of the keys
