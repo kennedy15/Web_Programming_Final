@@ -13,12 +13,12 @@ h1 {
     background-color: rgb(25, 26, 26);
     display: flex;
     justify-content: center;
+    align-items: center;
 }
 
 #map_area {
-    width: 85%;
-    height: 85%;
-    margin: auto;
+    width: 1400px;
+    height: 800px;
 }
 
 .section2 {
