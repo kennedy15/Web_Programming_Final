@@ -49,7 +49,7 @@ h1 {
 }
 
 .button_section {
-    padding-top: 5rem;
+    padding-left: 1rem;
     display: flex;
     flex-direction: column;
     justify-content: space-between;

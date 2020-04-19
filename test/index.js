@@ -8,7 +8,10 @@ function Country(name, death, recovered, confirmed) {
 var countryArray = []; //array of country objects
 
 function init() {
-    /*
+    get_data();
+
+    console.log(countryArray);
+
     mapboxgl.accessToken = 'pk.eyJ1Ijoia2VubmVkeTE1IiwiYSI6ImNqdWlnZmNrNTFhNWo0M3Vqd2s1d3M4dWkifQ.kXdDtWHyleWospgGzCmwIg';
     var map = new mapboxgl.Map({
         container: 'map_area',
@@ -18,11 +21,12 @@ function init() {
     });
 
     map.scrollZoom.disable();
+
+    /*
+    map.on('load', function() {
+            map.addSource('world_countries', {type: 'geojson', data: 'https://studio.mapbox.com/tilesets/kennedy15.0dmo34s5/'});
+    });
     */
-
-    get_data();
-
-    console.log(countryArray);
 
 }
 
@@ -42,7 +46,7 @@ function get_data() {
     fetch("https://pomber.github.io/covid19/timeseries.json")
         .then(response => response.json())
         .then(data => {
-            console.log(data);
+            //console.log(data); //will print the json object
             load_country_data(data);
         })
         .catch(err => console.error(err));
