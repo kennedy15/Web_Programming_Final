@@ -22,11 +22,24 @@ function init() {
 
     map.scrollZoom.disable();
 
-    /*
+
     map.on('load', function() {
-            map.addSource('world_countries', {type: 'geojson', data: 'https://studio.mapbox.com/tilesets/kennedy15.0dmo34s5/'});
+            map.addSource('world_countries', {
+                type: 'geojson',
+                data: 'world.geojson'
+            });
+
+            map.addLayer({
+                'id': 'world_countries_fill',
+                'type': 'fill',
+                'source': 'world_countries',
+                'paint': {
+                    'fill-color': '#f08',
+                    'fill-opacity': 0.4
+                }
+            });
     });
-    */
+
 
 }
 
