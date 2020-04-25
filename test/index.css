@@ -19,11 +19,20 @@ h1 {
 #map_area {
     width: 1400px;
     height: 800px;
+    background-color: rgb(25, 26, 26);
+}
+
+#graph_area {
+    width: 1400px;
+    height: 800px;
 }
 
 .section2 {
     height: 100vh;
     background-color: darkgrey;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .btn {
@@ -57,6 +66,10 @@ h1 {
 }
 
 .r_border {
-    border: 3px solid darkgrey; /* redish-pink >#f55668  more red > #f14e4e*/
+    border: 3px solid pink; /* redish-pink >#f55668  more red > #f14e4e*/
     border-radius: 15px;
+}
+
+.bar {
+    fill: steelblue;
 }
