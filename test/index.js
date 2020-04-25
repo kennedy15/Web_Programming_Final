@@ -6,6 +6,8 @@ function Country(name, death, recovered, confirmed) {
 }
 
 var countryArray = []; //array of country objects
+var mymap;
+/*
 function getColorDeaths(d) {
     return d > 500000 ? '#800026' :
             d > 350000  ? '#BD0026' :
@@ -15,6 +17,61 @@ function getColorDeaths(d) {
             d > 8500   ? '#FEB24C' :
             d > 950   ? '#FED976' :
                         '#FFEDA0';
+}
+*/
+
+function getColorDeaths(number) {
+    if(number > 500000) {
+        return '#800026';
+    }
+    else if(number > 350000 && number <= 500000) {
+        return '#BD0026';
+    }
+    else if(number > 150000 && number <= 350000) {
+        return '#E31A1C';
+    }
+    else if(number > 85000 && number <= 150000) {
+        return '#FC4E2A';
+    }
+    else if(number > 25000 && number <= 85000) {
+        return '#FD8D3C';
+    }
+    else if(number > 8500 && number <= 25000) {
+        return '#FEB24C';
+    }
+    else if(number > 950 && number <= 8500) {
+        return '#FED976';
+    }
+    else {
+        return '#FFEDA0';
+    }
+}
+
+function getColorRecovered(number) {
+    if(number > 500000) {
+        return '#003f5c';
+    }
+    else if(number > 350000 && number <= 500000) {
+        return '#2f4b7c';
+    }
+    else if(number > 150000 && number <= 350000) {
+        return '#665191';
+    }
+    else if(number > 85000 && number <= 150000) {
+        return '#a05195';
+    }
+    else if(number > 25000 && number <= 85000) {
+        return '#d45087';
+    }
+    else if(number > 8500 && number <= 25000) {
+        return '#f95d6a';
+    }
+    else if(number > 950 && number <= 8500) {
+        return '#ff7c43';
+    }
+    else {
+        return '#ffa600';
+    }
 }
 
 //fecthes data from the source and calls load_country_data on the json file
@@ -70,8 +127,9 @@ function load_country_data(data) {
     }
 
     //countryArray.forEach(state => console.log(state.death)); //debugging
-    //console.log(countryArray[0].death);
+    console.log(countryArray[0].death);
     //console.log(countryArray[4].death);
+
 }
 
 function load_bar_chart(data) {
@@ -153,7 +211,9 @@ function load_circular_bar_chart(data) {
 }
 
 function load_map() {
-    var mymap = L.map('map_area').setView([24.505, -0.09], 3);
+    //by default the map will load based on the number of Deaths
+
+    mymap = L.map('map_area').setView([24.505, -0.09], 3);
 
     //create the map
     L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}', {
@@ -165,25 +225,63 @@ function load_map() {
         accessToken: 'pk.eyJ1Ijoia2VubmVkeTE1IiwiYSI6ImNqdWlnZmNrNTFhNWo0M3Vqd2s1d3M4dWkifQ.kXdDtWHyleWospgGzCmwIg'
     }).addTo(mymap);
 
+    load_map_data('death', mymap)
+}
+
+function load_map_data(stat, mymap) {
+    var stat = stat;
+
+    //checks if there is already a datalayer added to the map
+    if(mymap.hasLayer()) {
+        //removes it if so
+        mymap.removeLayer(datalayer);
+    }
+
+    //generates a new datalayer
     $.getJSON("countries.geojson",function(data){
         // add GeoJSON layer to the map once the file is loaded
+        let color = '';
+        let length = countryArray.length;
+        console.log(length);
         var datalayer = L.geoJson(data ,{
             onEachFeature: function(feature, featureLayer) {
                 //set the name from the feature to a variable to use
                 let name = feature.properties.ADMIN;
-                //bind the name to a popup we can also bind the statistics to this later
-                featureLayer.bindPopup(name);
+
                 //find the data for the country in the countryArray
-                for(let i = 0; i < countryArray.length; i++) {
-                    if(name = countryArray[i].name) {
+                for(let i = 0; i < length; i++) {
+                    if(name == countryArray[i].name) {
+                        //console.log(countryArray[i].death)
                         //set the color based on the total number of deaths / recovered / confirmed-cases
-                        featureLayer.setStyle({fillColor : getColorDeaths(countryArray[i].death)})
+                        if(stat == 'recovered') {
+                            color = getColorRecovered(countryArray[i].recovered);
+                            featureLayer.setStyle({fillColor : color});
+                            //binding statistics to the country as a popup!
+                            featureLayer.bindPopup('Name: ' + countryArray[i].name + '<br>' + 'total Deaths: ' + countryArray[i].death + '<br>' + 'total Recovered: ' + countryArray[i].recovered + '<br>' + 'total Confirmed Cases: ' + countryArray[i].confirmed);
+                        }
+                        else if(stat == 'confirmed') {
+                            color = getColorDeaths(countryArray[i].confirmed);
+                            featureLayer.setStyle({fillColor : color});
+                            //binding statistics to the country as a popup!
+                            featureLayer.bindPopup('Name: ' + countryArray[i].name + '<br>' + 'total Deaths: ' + countryArray[i].death + '<br>' + 'total Recovered: ' + countryArray[i].recovered + '<br>' + 'total Confirmed Cases: ' + countryArray[i].confirmed);
+                        }
+                        else {
+                            color = getColorDeaths(countryArray[i].death);
+                            featureLayer.setStyle({fillColor : color});
+                            //binding statistics to the country as a popup!
+                            featureLayer.bindPopup('Name: ' + countryArray[i].name + '<br>' + 'total Deaths: ' + countryArray[i].death + '<br>' + 'total Recovered: ' + countryArray[i].recovered + '<br>' + 'total Confirmed Cases: ' + countryArray[i].confirmed);
+                        }
+
                     }
                 }
             }
         }).addTo(mymap);
         mymap.fitBounds(datalayer.getBounds());
     });
+}
+
+function do_nothing() {
+
 }
 
 function init() {
@@ -198,7 +296,9 @@ function init() {
 
     //loading map
     load_map();
-
+    document.getElementById('confirmed').onclick = function() {load_map_data('confirmed', mymap)};
+    document.getElementById('recovered').onclick = function() {load_map_data('recovered', mymap)};
+    document.getElementById('deaths').onclick = function() {load_map_data('death', mymap)};
 }
 
 
