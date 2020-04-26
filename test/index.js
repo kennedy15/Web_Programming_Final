@@ -47,7 +47,7 @@ function getColorDeaths(number) {
     }
 }
 
-function getColorRecovered(number) {
+function getColorConfirmed(number) {
     if(number > 500000) {
         return '#003f5c';
     }
@@ -71,6 +71,33 @@ function getColorRecovered(number) {
     }
     else {
         return '#ffa600';
+    }
+}
+
+function getColorRecovered(number) {
+    if(number > 500000) {
+        return '#05668D';
+    }
+    else if(number > 350000 && number <= 500000) {
+        return '#028090';
+    }
+    else if(number > 150000 && number <= 350000) {
+        return '#019493';
+    }
+    else if(number > 85000 && number <= 150000) {
+        return '#00A896';
+    }
+    else if(number > 25000 && number <= 85000) {
+        return '#01B698';
+    }
+    else if(number > 8500 && number <= 25000) {
+        return '#02C39A';
+    }
+    else if(number > 950 && number <= 8500) {
+        return '#79DBAC';
+    }
+    else {
+        return '#F0F3BD';
     }
 }
 
@@ -260,7 +287,7 @@ function load_map_data(stat, mymap) {
                             featureLayer.bindPopup('Name: ' + countryArray[i].name + '<br>' + 'total Deaths: ' + countryArray[i].death + '<br>' + 'total Recovered: ' + countryArray[i].recovered + '<br>' + 'total Confirmed Cases: ' + countryArray[i].confirmed);
                         }
                         else if(stat == 'confirmed') {
-                            color = getColorDeaths(countryArray[i].confirmed);
+                            color = getColorConfirmed(countryArray[i].confirmed);
                             featureLayer.setStyle({fillColor : color});
                             //binding statistics to the country as a popup!
                             featureLayer.bindPopup('Name: ' + countryArray[i].name + '<br>' + 'total Deaths: ' + countryArray[i].death + '<br>' + 'total Recovered: ' + countryArray[i].recovered + '<br>' + 'total Confirmed Cases: ' + countryArray[i].confirmed);
@@ -288,7 +315,7 @@ function init() {
     get_data();
     console.log(countryArray);
 
-    load_circular_bar_chart(countryArray);
+    //load_circular_bar_chart(countryArray);
 
     //console.log(countryArray);
 
