@@ -71,7 +71,7 @@ hr {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    height:  200px;
+    height:  250px;
 }
 
 .r_border {
@@ -97,4 +97,16 @@ hr {
 
 .recovered_gradient {
     background-image: linear-gradient(to right, #F0F3BD 0%, #02C39A 26%, #00A896 52%, #05668D 100%);
+}
+
+.btn_key {
+    color: #ffffff;
+    display: flex;
+    justify-content: center;
+    align-items: middle;
+}
+
+.btn_hr {
+    color: #ffffff;
+    flex-grow: 1;
 }

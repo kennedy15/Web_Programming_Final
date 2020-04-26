@@ -1,3 +1,4 @@
+//Country Object
 function Country(name, death, recovered, confirmed) {
     this.name = name;
     this.death = death;
@@ -7,18 +8,6 @@ function Country(name, death, recovered, confirmed) {
 
 var countryArray = []; //array of country objects
 var mymap;
-/*
-function getColorDeaths(d) {
-    return d > 500000 ? '#800026' :
-            d > 350000  ? '#BD0026' :
-            d > 150000  ? '#E31A1C' :
-            d > 85000  ? '#FC4E2A' :
-            d > 25000   ? '#FD8D3C' :
-            d > 8500   ? '#FEB24C' :
-            d > 950   ? '#FED976' :
-                        '#FFEDA0';
-}
-*/
 
 function getColorDeaths(number) {
     if(number > 500000) {
@@ -154,7 +143,7 @@ function load_country_data(data) {
     }
 
     //countryArray.forEach(state => console.log(state.death)); //debugging
-    console.log(countryArray[0].death);
+    //console.log(countryArray[0].death);
     //console.log(countryArray[4].death);
 
 }
@@ -269,7 +258,7 @@ function load_map_data(stat, mymap) {
         // add GeoJSON layer to the map once the file is loaded
         let color = '';
         let length = countryArray.length;
-        console.log(length);
+        //console.log(length);
         var datalayer = L.geoJson(data ,{
             onEachFeature: function(feature, featureLayer) {
                 //set the name from the feature to a variable to use
@@ -307,7 +296,28 @@ function load_map_data(stat, mymap) {
     });
 }
 
-function do_nothing() {
+function parallel_coordinates(data) {
+    var data = data;
+    var data_array = [];
+    var country_names = [];
+
+    var column_names = data[0].columns;
+
+    console.log(data);
+    console.log(column_names);
+
+    //intialize variables
+    var margin = {top: 10, right: 10, bottom: 10, left: 10},
+        width = 900 - margin.left - margin.right,
+        height = 900 - margin.top - margin.bottom,
+        max = 100000,
+        color = 'steelblue';
+
+    var svg = d3.select("#graph_area").append("svg")
+        .attr("width", width + margin.left + margin.right)
+        .attr("height", height + margin.top + margin.bottom)
+      .append("g")
+        .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
 }
 
@@ -315,14 +325,15 @@ function init() {
     get_data();
     console.log(countryArray);
 
-    //load_circular_bar_chart(countryArray);
-
-    //console.log(countryArray);
-
-    //load_bar_chart(countryArray);
-
-    //loading map
+    //loading map for section1
     load_map();
+
+    //promise to load inthe data first then execute the visualization function for section2
+    Promise.all([
+        d3.csv('data/time_series_covid19_deaths_global.csv')])
+    .then(parallel_coordinates);
+
+    //intialize buttons
     document.getElementById('confirmed').onclick = function() {load_map_data('confirmed', mymap)};
     document.getElementById('recovered').onclick = function() {load_map_data('recovered', mymap)};
     document.getElementById('deaths').onclick = function() {load_map_data('death', mymap)};
