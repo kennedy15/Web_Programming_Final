@@ -148,93 +148,17 @@ function load_country_data(data) {
 
 }
 
-function load_bar_chart(data) {
-    let w = 1400;
-    let h = 800;
-
-    let color = 'steelblue'
-
-    var chart = d3.select('#graph_area').append('svg')
-            .attr('width', w)
-            .attr('height', h)
-            .selectAll('rect')
-                .data(data)
-                .enter().append('rect')
-                    .style('fill', color)
-                    .attr('width', 15) //15 = barWidth
-                    .attr('height', function(d, i){
-                        return d[i][1];
-                    })
-                    .attr('x', function(i){
-                        return i * (15 + 5); //barwidth + barOffset
-                    })
-                    .attr('y', function(d, i){
-                        return h - d[i][1];
-                    })
-
-}
-
-function load_circular_bar_chart(data) {
-
-    //intialize variables
-    var margin = {top: 10, right: 10, bottom: 10, left: 10},
-        w = 900 - margin.left - margin.right,
-        h = 900 - margin.top - margin.bottom,
-        innerRadius = 100,
-        outerRadius = Math.min(w, h) / 2,
-        max = 100000,
-        color = 'steelblue';
-
-    //appending svg to the page
-    var svg = d3.select('#graph_area')
-        .append('svg')
-            .attr('width', w + margin.left + margin.right)
-            .attr('height', h + margin.top + margin.bottom)
-        .append('g')
-            .attr('transform', 'translate(' + w / 2 + ',' + (h / 2 + 100)+ ')');
-
-    // X scale
-    var x = d3.scaleBand()
-        .range([0,2 * Math.PI])
-        .align(0)
-        .domain(data.map(function(d, i) {
-            return d[i].death;
-        }) );
-
-    // Y scale
-    var y = d3.scaleRadial()
-        .range([innerRadius, outerRadius])
-        .domain([0, max]);
-
-    svg.append('g')
-        .selectAll('path')
-        .data(data)
-        .enter()
-        .append('path')
-            .attr('fill', color)
-            .attr('d', d3.arc()
-                .innerRadius(function(d, i) {
-                    return y(d[i].death);
-                })
-                .outerRadius(function(d, i) {
-                    return x(d[i].name);
-                })
-                .endAngle(function(d, i) {
-                    return x(d[i].name) + x.bandwidth();
-                })
-                .padAngle(0.01)
-                .padRadius(innerRadius))
-}
-
 function load_map() {
     //by default the map will load based on the number of Deaths
-
-    mymap = L.map('map_area').setView([24.505, -0.09], 3);
+    mymap = L.map('map_area', {
+        center: [24.505, -0.09],
+	    zoom: 5 //this is not work for setting the zoom level :(
+    });
 
     //create the map
     L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}', {
         attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
-        maxZoom: 18,
+        maxZoom: 8,
         id: 'mapbox/dark-v10',
         tileSize: 512,
         zoomOffset: -1,
@@ -296,7 +220,8 @@ function load_map_data(stat, mymap) {
     });
 }
 
-function parallel_coordinates(data) {
+function line_chart(data) {
+
     var data = data;
     var data_array = [];
     var country_names = [];
@@ -308,17 +233,81 @@ function parallel_coordinates(data) {
 
     //intialize variables
     var margin = {top: 10, right: 10, bottom: 10, left: 10},
-        width = 900 - margin.left - margin.right,
-        height = 900 - margin.top - margin.bottom,
-        max = 100000,
-        color = 'steelblue';
+        w = 1400 - margin.left - margin.right,
+        h = 800 - margin.top - margin.bottom;
 
+    // parse the date / time
+    var parseTime = d3.timeParse("%d-%b-%y");
+
+    // set the ranges
+    var x = d3.scaleTime().range([0, w]);
+    var y = d3.scaleLinear().range([h, 0]);
+
+    // append the svg obgect to the body of the page
     var svg = d3.select("#graph_area").append("svg")
-        .attr("width", width + margin.left + margin.right)
-        .attr("height", height + margin.top + margin.bottom)
+        .attr("width", w + margin.left + margin.right)
+        .attr("height", h + margin.top + margin.bottom)
       .append("g")
-        .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+        .attr("transform",
+              "translate(" + margin.left + "," + margin.top + ")");
 
+    // Add the X Axis
+    svg.append("g")
+        .attr("transform", "translate(0," + h + ")")
+        .call(d3.axisBottom(x));
+
+    // Add the Y Axis
+    svg.append("g")
+        .call(d3.axisLeft(y));
+
+    create_line(svg, data, column_names, x, y); //function that draws the line
+
+}
+
+function create_line(svg, data, column_names, x, y, country) {
+    var country_data;
+
+    if(country === undefined) {
+        country = "US"; //setting default
+        console.log(country);
+    }
+
+    let length = data[0].length;
+
+    for(let i = 0; i < length; i++) {
+        if(data[0][i].Country == country) {
+            //selects the right country
+            country_data = data[0][i];
+        }
+    }
+
+    console.log(country_data);
+
+    let i = 4;
+    // format the data
+    country_data.forEach(function(d) {
+        d.date = parseTime(column_names[i]);
+        d.death = +d.column_names[i];
+        i++
+    });
+
+
+    // Scale the range of the data
+    x.domain(d3.extent(country_data, function(d) { return d.date; }));
+    y.domain([0, d3.max(country_data, function(d) {
+ 	    return Math.max(d.death); })]);
+
+    // define the 1st line
+    var valueline = d3.line()
+        .x(function(d) { return x(d.date); })
+        .y(function(d) { return y(d.death); });
+
+
+    // Add the valueline path.
+    svg.append("path")
+        .data([country_data])
+        .attr("class", "line")
+        .attr("d", valueline);
 }
 
 function init() {
@@ -331,7 +320,7 @@ function init() {
     //promise to load inthe data first then execute the visualization function for section2
     Promise.all([
         d3.csv('data/time_series_covid19_deaths_global.csv')])
-    .then(parallel_coordinates);
+    .then(line_chart);
 
     //intialize buttons
     document.getElementById('confirmed').onclick = function() {load_map_data('confirmed', mymap)};
