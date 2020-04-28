@@ -13,10 +13,9 @@
             d3.csv('data/time_series_covid19_deaths_global.csv')])
         .then(lineChart);
 
-        //intialize buttons
-        document.getElementById('confirmed').onclick = function() {loadMapData('confirmed', mymap)};
-        document.getElementById('recovered').onclick = function() {loadMapData('recovered', mymap)};
-        document.getElementById('deaths').onclick = function() {loadMapData('death', mymap)};
+        document.getElementById('deaths').addEventListener('click', () => {toggleMap('deaths')});
+        document.getElementById('confirmed').addEventListener('click', () => {toggleMap('confirmed')});
+        document.getElementById('recovered').addEventListener('click', () => {toggleMap('recovered')});
     }
 
     //Country Object
@@ -28,6 +27,7 @@
     }
 
     let countries = {};
+    let countryData = null;
     var mymap;
 
     let deathScale = d3.scaleThreshold()
@@ -104,7 +104,8 @@
         let svg = d3.select(canvas).append('svg');
 
         d3.json('countries.geojson').then(data => {
-            data.features.forEach(d => {
+            countryData = data;
+            countryData.features.forEach(d => {
                 let countryName = d.properties['ADMIN'];
                 if (countryName in countries) {
                    d.properties['fillColor'] = deathScale(countries[countryName].deaths);
@@ -116,7 +117,7 @@
 
             mymap.addSource('countries-source', {
                 'type': 'geojson',
-                'data': data
+                'data': countryData
             });
 
             mymap.addLayer({
@@ -138,6 +139,32 @@
                 }
             });
         });
+    }
+
+    function toggleMap(stat) {
+        let scale = null;
+        switch (stat) {
+            case 'deaths':
+                scale = deathScale;
+                break;
+            case 'confirmed':
+                scale = confirmedScale;
+                break;
+            case 'recovered':
+                scale = recoveredScale;
+                break;
+        }
+
+        countryData.features.forEach(d => {
+            let countryName = d.properties['ADMIN'];
+            if (countryName in countries) {
+               d.properties['fillColor'] = scale(countries[countryName].deaths);
+            }
+            else {
+                d.properties['fillColor'] = '#000000';
+            }
+        });
+        mymap.getSource('countries-source').setData(countryData);
     }
 
     function loadMap() {
