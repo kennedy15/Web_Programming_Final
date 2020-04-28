@@ -10,25 +10,25 @@ var countryArray = []; //array of country objects
 var mymap;
 
 function getColorDeaths(number) {
-    if(number > 500000) {
+    if(number > 35000) {
         return '#800026';
     }
-    else if(number > 350000 && number <= 500000) {
+    else if(number > 20000 && number <= 35000) {
         return '#BD0026';
     }
-    else if(number > 150000 && number <= 350000) {
+    else if(number > 10000 && number <= 20000) {
         return '#E31A1C';
     }
-    else if(number > 85000 && number <= 150000) {
+    else if(number > 7000 && number <= 10000) {
         return '#FC4E2A';
     }
-    else if(number > 25000 && number <= 85000) {
+    else if(number > 4000 && number <= 7000) {
         return '#FD8D3C';
     }
-    else if(number > 8500 && number <= 25000) {
+    else if(number > 1000 && number <= 4000) {
         return '#FEB24C';
     }
-    else if(number > 950 && number <= 8500) {
+    else if(number > 450 && number <= 1000) {
         return '#FED976';
     }
     else {
@@ -64,25 +64,25 @@ function getColorConfirmed(number) {
 }
 
 function getColorRecovered(number) {
-    if(number > 500000) {
+    if(number > 100000) {
         return '#05668D';
     }
-    else if(number > 350000 && number <= 500000) {
+    else if(number > 85000 && number <= 100000) {
         return '#028090';
     }
-    else if(number > 150000 && number <= 350000) {
+    else if(number > 70000 && number <= 85000) {
         return '#019493';
     }
-    else if(number > 85000 && number <= 150000) {
+    else if(number > 55000 && number <= 70000) {
         return '#00A896';
     }
-    else if(number > 25000 && number <= 85000) {
+    else if(number > 40000 && number <= 55000) {
         return '#01B698';
     }
-    else if(number > 8500 && number <= 25000) {
+    else if(number > 25000 && number <= 40000) {
         return '#02C39A';
     }
-    else if(number > 950 && number <= 8500) {
+    else if(number > 1000 && number <= 10000) {
         return '#79DBAC';
     }
     else {
@@ -105,11 +105,10 @@ function get_data() {
 function load_country_data(data) {
     let json_Length = Object.keys(data).length; //amount of countrys
     let c_keys = Object.keys(data); //list of the keys
-    //console.log(json_Length);
+    //console.log(c_keys);
 
     for(let i = 0; i < json_Length; i++) {
         let tmp = new Country(); // create new Country object for each country
-        //let tmp = [];
         let name = c_keys[i] //get the name of the country
         let length = data[name].length; //get the length from inside the country
 
@@ -123,18 +122,33 @@ function load_country_data(data) {
         //console.log(data[name][4]);
         //console.log(data[name][4].deaths);
 
+        //so the json is not reporting daily numbers, its reporting the total number so this for loops is wrong.
+        /*
         for(let i = 0; i < length; i++) {
             tmp_deaths += data[name][i].deaths;
             tmp_recovered += data[name][i].recovered;
             tmp_confirmed += data[name][i].confirmed;
+
+            if(name == "US") {
+                console.log(tmp_deaths);
+                console.log(i);
+            }
         }
+        */
 
         //fill in the country object with the data!
+        /*
         tmp.name = name;
         tmp.death = tmp_deaths;
         tmp.confirmed = tmp_confirmed;
         tmp.recovered = tmp_recovered;
+        */
 
+        //length = the last day which has the most up to date numbers
+        tmp.name = name;
+        tmp.death = data[name][length-1].deaths;
+        tmp.confirmed = data[name][length-1].confirmed;
+        tmp.recovered = data[name][length-1].recovered;
 
         //make an array of arrays instead
         //tmp.push(name, tmp_deaths, tmp_confirmed, tmp_recovered);
