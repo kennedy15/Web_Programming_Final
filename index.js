@@ -5,7 +5,8 @@
         getData();
 
         //loading map for section1
-        loadMap();
+        // loadMap();
+        createMap();
 
         //promise to load inthe data first then execute the visualization function for section2
         Promise.all([
@@ -85,6 +86,55 @@
         Object.keys(data).forEach(countryName => {
             country = data[countryName][data[countryName].length - 1];
             countryArray.push(new Country(countryName, country.deaths, country.recovered, country.confirmed));
+        });
+    }
+
+    function createMap() {
+        let center = [24.505, -0.090];
+        mapboxgl.accessToken = 'pk.eyJ1IjoiamFnb2R3aW4iLCJhIjoiY2lnOGQxaDhiMDZzMXZkbHYzZmN4ZzdsYiJ9.Uwh_L37P-qUoeC-MBSDteA';
+        mymap = new mapboxgl.Map({
+            container: 'map_area',
+            center,
+            zoom: 2,
+            style: 'mapbox://styles/mapbox/dark-v10',
+        });
+        mymap.dragRotate.disable();
+        mymap.touchZoomRotate.disable();
+
+        let canvas = mymap.getCanvasContainer();
+        let svg = d3.select(canvas).append('svg');
+
+        d3.json('countries.geojson').then(countries => {
+            mymap.addSource('countries-source', {
+                'type': 'geojson',
+                'data': countries
+            });
+            mymap.addLayer({
+                'id': 'countries-fill',
+                'type': 'fill',
+                'source': 'countries-source',
+                'paint': {
+                    'fill-color': '#ff0000',
+                    'fill-opacity': 0.4,
+                }
+            });
+
+            mymap.addLayer({
+                'id': 'countries-boundary',
+                'type': 'line',
+                'source': 'countries-source',
+                'paint': {
+                    'line-color': 'rgb(0, 0, 0)'
+                }
+            })
+
+            // console.log(countries.features);
+            // svg.append('g')
+            //     .selectAll('path')
+            //     .data(countries.features)
+            //     .enter()
+            //     .append('path')
+            //     .attr('fill', '#ff0000');
         });
     }
 
@@ -168,8 +218,8 @@
 
         var column_names = data[0].columns;
 
-        console.log(data);
-        console.log(column_names);
+        // console.log(data);
+        // console.log(column_names);
 
         //intialize variables
         var margin = {top: 10, right: 10, bottom: 10, left: 10},
@@ -209,7 +259,7 @@
 
         if(country === undefined) {
             country = "US"; //setting default
-            console.log(country);
+            // console.log(country);
         }
 
         let length = data[0].length;
@@ -221,7 +271,7 @@
             }
         }
 
-        console.log(country_data);
+        // console.log(country_data);
 
         for (let i = 4; i < country_data.length; i++) {
             d.date = parseTime(column_names[i]);
