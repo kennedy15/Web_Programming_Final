@@ -89,9 +89,6 @@
         mymap.dragRotate.disable();
         mymap.touchZoomRotate.disable();
 
-        let canvas = mymap.getCanvasContainer();
-        let svg = d3.select(canvas).append('svg');
-
         d3.json('countries.geojson').then(data => {
             countryData = data;
             countryData.features.forEach(d => {
@@ -100,7 +97,7 @@
                    d.properties['fillColor'] = deathScale(countries[countryName].deaths);
                 }
                 else {
-                    d.properties['fillColor'] = '#000000';
+                    d.properties['fillColor'] = 'rgba(0, 0, 0, 0)';
                 }
             });
 
@@ -145,8 +142,10 @@
             }
         });
 
-        mymap.on('mouseenter', 'countries-fill', function() {
-            mymap.getCanvas().style.cursor = 'pointer';
+        mymap.on('mouseenter', 'countries-fill', function(d) {
+            if (d.features[0].properties['fillColor'] !== 'rgba(0, 0, 0, 0)') {
+                mymap.getCanvas().style.cursor = 'pointer';
+            }
         });
         
         mymap.on('mouseleave', 'countries-fill', function() {
@@ -174,7 +173,7 @@
                d.properties['fillColor'] = scale(countries[countryName].deaths);
             }
             else {
-                d.properties['fillColor'] = '#000000';
+                d.properties['fillColor'] = 'rgba(0, 0, 0, 0)';
             }
         });
         mymap.getSource('countries-source').setData(countryData);
