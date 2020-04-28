@@ -3,7 +3,6 @@
 
     function init() {
         getData();
-        console.log(countryArray);
 
         //loading map for section1
         loadMap();
@@ -82,30 +81,11 @@
 
     //creates a Country object from each key in the json data fetched and appends the object to an array.
     function loadCountryData(data) {
-        let json_Length = Object.keys(data).length; //amount of countrys
-        let c_keys = Object.keys(data); //list of the keys
-        //console.log(c_keys);
-
-        for(let i = 0; i < json_Length; i++) {
-            let tmp = new Country(); // create new Country object for each country
-            let name = c_keys[i] //get the name of the country
-            let length = data[name].length; //get the length from inside the country
-
-            let tmp_deaths = 0;
-            let tmp_recovered = 0;
-            let tmp_confirmed = 0;
-
-            //length = the last day which has the most up to date numbers
-            tmp.name = name;
-            tmp.death = data[name][length-1].deaths;
-            tmp.confirmed = data[name][length-1].confirmed;
-            tmp.recovered = data[name][length-1].recovered;
-
-            //make an array of arrays instead
-            //tmp.push(name, tmp_deaths, tmp_confirmed, tmp_recovered);
-
-            countryArray.push(tmp); //add the new object to an array to keep track
-        }
+        let country = null;
+        Object.keys(data).forEach(countryName => {
+            country = data[countryName][data[countryName].length - 1];
+            countryArray.push(new Country(countryName, country.deaths, country.recovered, country.confirmed));
+        });
     }
 
     function loadMap() {
