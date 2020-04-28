@@ -7,13 +7,23 @@
 
         //promise to load inthe data first then execute the visualization function for section2
         Promise.all([
-            d3.csv('data/time_series_covid19_deaths_global.csv')])
-        .then(lineChart);
+            d3.csv('data/time_series_covid19_deaths_global.csv'),
+            d3.csv('data/time_series_covid19_recovered_global.csv')])
+        .then(processData);
 
         document.getElementById('deaths').addEventListener('click', () => {toggleMap('deaths')});
         document.getElementById('confirmed').addEventListener('click', () => {toggleMap('confirmed')});
         document.getElementById('recovered').addEventListener('click', () => {toggleMap('recovered')});
+
+        document.getElementById('countries').onchange=function() {
+            var selection = this.value;
+            prepData(time_data_deaths, time_data_recovered, selection);
+        };
     }
+
+    var time_data_deaths;
+    var time_data_confirmed;
+    var time_data_recovered;
 
     let countries = {};
     let countryData = null;
@@ -147,7 +157,7 @@
                 mymap.getCanvas().style.cursor = 'pointer';
             }
         });
-        
+
         mymap.on('mouseleave', 'countries-fill', function() {
             mymap.getCanvas().style.cursor = '';
         });
@@ -179,90 +189,145 @@
         mymap.getSource('countries-source').setData(countryData);
     }
 
-    function lineChart(data) {
+    function processData(data) {
+        time_data_deaths = data[0];
+        time_data_recovered = data[1];
 
-        var data = data;
-        var data_array = [];
-        var country_names = [];
+        console.log(time_data_deaths);
 
-        var column_names = data[0].columns;
+        let list = [];
 
-        // console.log(data);
-        // console.log(column_names);
+        for(let i = 0; i < time_data_deaths.length; i++) {
+            if(list.includes(time_data_deaths[i].Country) == false) {
+                list.push(time_data_deaths[i].Country);
+            }
+        }
 
-        //intialize variables
-        var margin = {top: 10, right: 10, bottom: 10, left: 10},
-            w = 1400 - margin.left - margin.right,
-            h = 800 - margin.top - margin.bottom;
+        console.log(list);
 
-        // parse the date / time
-        var parseTime = d3.timeParse("%d-%b-%y");
+        let dropdown = document.getElementById('countries');
 
-        // set the ranges
-        var x = d3.scaleTime().range([0, w]);
-        var y = d3.scaleLinear().range([h, 0]);
+        for(var i = 0; i < list.length; i++) {
+            let opt = list[i];
+            let element = document.createElement("option");
+            element.textContent = opt;
+            element.value = opt;
+            dropdown.appendChild(element);
+        }
 
-        // append the svg obgect to the body of the page
-        var svg = d3.select("#graph_area").append("svg")
-            .attr("width", w + margin.left + margin.right)
-            .attr("height", h + margin.top + margin.bottom)
-        .append("g")
-            .attr("transform",
-                "translate(" + margin.left + "," + margin.top + ")");
+        prepData(time_data_deaths, time_data_recovered);
 
-        // Add the X Axis
-        svg.append("g")
-            .attr("transform", "translate(0," + h + ")")
-            .call(d3.axisBottom(x));
-
-        // Add the Y Axis
-        svg.append("g")
-            .call(d3.axisLeft(y));
-
-        createLine(svg, data, column_names, x, y); //function that draws the line
-
+        //lineChart(time_data_deaths);
     }
 
-    function createLine(svg, data, column_names, x, y, country) {
-        var country_data;
+    function prepData(death, recovered, country) {
+        var deaths = death;
+        var recovered = recovered;
+
+        var death_numbers = [];
+        var recovered_numbers = [];
+        //separate array for dates
+        var dates = [];
+
+        //only need to grab the column names from one file
+        var column_names = deaths.columns;
 
         if(country === undefined) {
             country = "US"; //setting default
             // console.log(country);
         }
 
-        let length = data[0].length;
+        //console.log(data);
+        let length = deaths.length;
+
+        //country_data.push('date, number')
 
         for(let i = 0; i < length; i++) {
-            if(data[0][i].Country == country) {
+            if(deaths[i].Country == country) {
                 //selects the right country
-                country_data = data[0][i];
+
+                let j = 4;
+                let deaths_obj = deaths[i];
+                let recovered_obj = recovered[i];
+
+                for (const instance in deaths_obj) {
+                    let date = column_names[j];
+                    let d_number = deaths_obj[column_names[j]];
+                    let r_number = recovered_obj[column_names[j]];
+
+                    death_numbers.push(d_number);
+                    recovered_numbers.push(r_number);
+                    dates.push(date);
+                    j++
+                }
             }
         }
 
-        // console.log(country_data);
-
-        for (let i = 4; i < country_data.length; i++) {
-            d.date = parseTime(column_names[i]);
-            d.death = +d.column_names[i];
+        for(let i = 0; i < death_numbers.length; i++) {
+            if(death_numbers[i] === undefined) {
+                death_numbers.splice(i);
+            }
+            if(recovered_numbers[i] === undefined) {
+                recovered_numbers.splice(i);
+            }
+            if(dates[i] === undefined) {
+                dates.splice(i);
+            }
         }
 
 
-        // Scale the range of the data
-        x.domain(d3.extent(country_data, function(d) { return d.date; }));
-        y.domain([0, d3.max(country_data, function(d) {
-            return Math.max(d.death); })]);
+        if(recovered_numbers.length == 94) {
+            recovered_numbers.splice(1, 0, "0");
+        }
 
-        // define the 1st line
-        var valueline = d3.line()
-            .x(function(d) { return x(d.date); })
-            .y(function(d) { return y(d.death); });
+        death_numbers.splice(0, 0, "deaths");
+        recovered_numbers.splice(0, 0, "recovered");
+        //dates.splice(0,0,"dates");
 
+        //console.log(death_numbers);
+        //console.log(recovered_numbers);
 
-        // Add the valueline path.
-        svg.append("path")
-            .data([country_data])
-            .attr("class", "line")
-            .attr("d", valueline);
+        //let consolidate = [death_numbers, recovered_numbers, confirmed_numbers];
+
+        lineChart(death_numbers, recovered_numbers, dates);
+
+    }
+
+    function lineChart(deaths, recovered, dates) {
+
+        console.log(deaths);
+        console.log(recovered);
+
+        var chart = c3.generate({
+            data: {
+                columns: [
+                    deaths,
+                    recovered,
+                ],
+                axes: {
+                    deaths: 'y',
+                    recovered: 'y2'
+                }
+            },
+            axis: {
+                y: {
+                    label: 'deaths',
+                    show: true
+                },
+                y2: {
+                    label: 'recovered',
+                    show: true
+                },
+                x: {
+                    label: 'Dates',
+                    tick: {
+                        values: [dates],
+                    }
+                }
+            }
+        });
+
+        chart.load();
+
     }
 })();

@@ -33,9 +33,27 @@ hr {
     background-color: rgb(25, 26, 26);
 }
 
-#graph_area {
+#chart {
     width: 1400px;
     height: 800px;
+}
+
+.c3-axis-y text, label {
+   fill: #FAFAFA;
+   font-size:12px;
+}
+.c3-axis-y2 text, label {
+   fill: #FAFAFA;
+   font-size:12px;
+}
+.c3-axis-x text, label {
+    font-size:12px;
+    fill: #FAFAFA;
+}
+
+.c3-legend-item {
+    fill: #fafafa;
+    font-size:14px;
 }
 
 .section2 {
