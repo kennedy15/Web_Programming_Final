@@ -86,7 +86,6 @@
             const {date, ...country} = data[countryName][data[countryName].length - 1];
             countries[countryName] = country;
         });
-        console.log(countries);
     }
 
     function createMap() {
@@ -104,10 +103,20 @@
         let canvas = mymap.getCanvasContainer();
         let svg = d3.select(canvas).append('svg');
 
-        d3.json('countries.geojson').then(countries => {
+        d3.json('countries.geojson').then(data => {
+            data.features.forEach(d => {
+                let countryName = d.properties['ADMIN'];
+                if (countryName in countries) {
+                   d.properties['fillColor'] = deathScale(countries[countryName].deaths);
+                }
+                else {
+                    d.properties['fillColor'] = '#000000';
+                }
+            });
+
             mymap.addSource('countries-source', {
                 'type': 'geojson',
-                'data': countries
+                'data': data
             });
 
             mymap.addLayer({
@@ -115,8 +124,8 @@
                 'type': 'fill',
                 'source': 'countries-source',
                 'paint': {
-                    'fill-color': '#ff0000',
-                    'fill-opacity': 0.4,
+                    'fill-color': ['get', 'fillColor'],
+                    'fill-opacity': 0.8,
                 }
             });
 
@@ -127,15 +136,7 @@
                 'paint': {
                     'line-color': 'rgb(0, 0, 0)'
                 }
-            })
-
-            // console.log(countries.features);
-            // svg.append('g')
-            //     .selectAll('path')
-            //     .data(countries.features)
-            //     .enter()
-            //     .append('path')
-            //     .attr('fill', '#ff0000');
+            });
         });
     }
 
