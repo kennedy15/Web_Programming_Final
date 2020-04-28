@@ -30,86 +30,44 @@
     var countryArray = []; //array of country objects
     var mymap;
 
-    function getColorDeaths(number) {
-        if(number > 35000) {
-            return '#800026';
-        }
-        else if(number > 20000 && number <= 35000) {
-            return '#BD0026';
-        }
-        else if(number > 10000 && number <= 20000) {
-            return '#E31A1C';
-        }
-        else if(number > 7000 && number <= 10000) {
-            return '#FC4E2A';
-        }
-        else if(number > 4000 && number <= 7000) {
-            return '#FD8D3C';
-        }
-        else if(number > 1000 && number <= 4000) {
-            return '#FEB24C';
-        }
-        else if(number > 450 && number <= 1000) {
-            return '#FED976';
-        }
-        else {
-            return '#FFEDA0';
-        }
-    }
+    let deathScale = d3.scaleThreshold()
+        .domain([450, 1000, 4000, 7000, 10000, 20000, 35000])
+        .range([
+            '#ffeda0',
+            '#fed976',
+            '#feb24c',
+            '#fd8d3c',
+            '#fc4e2a',
+            '#e31a1c',
+            '#bd0026',
+            '#800026',
+        ]);
 
-    function getColorConfirmed(number) {
-        if(number > 500000) {
-            return '#003f5c';
-        }
-        else if(number > 350000 && number <= 500000) {
-            return '#2f4b7c';
-        }
-        else if(number > 150000 && number <= 350000) {
-            return '#665191';
-        }
-        else if(number > 85000 && number <= 150000) {
-            return '#a05195';
-        }
-        else if(number > 25000 && number <= 85000) {
-            return '#d45087';
-        }
-        else if(number > 8500 && number <= 25000) {
-            return '#f95d6a';
-        }
-        else if(number > 950 && number <= 8500) {
-            return '#ff7c43';
-        }
-        else {
-            return '#ffa600';
-        }
-    }
+    let confirmedScale = d3.scaleThreshold()
+        .domain([950, 8500, 25000, 85000, 150000, 350000, 500000])
+        .range([
+            '#ffa600',
+            '#ff7c43',
+            '#f95d6a',
+            '#d45087',
+            '#a05195',
+            '#665191',
+            '#2f4b7c',
+            '#003f5c',
+        ]);
 
-    function getColorRecovered(number) {
-        if(number > 100000) {
-            return '#05668D';
-        }
-        else if(number > 85000 && number <= 100000) {
-            return '#028090';
-        }
-        else if(number > 70000 && number <= 85000) {
-            return '#019493';
-        }
-        else if(number > 55000 && number <= 70000) {
-            return '#00A896';
-        }
-        else if(number > 40000 && number <= 55000) {
-            return '#01B698';
-        }
-        else if(number > 25000 && number <= 40000) {
-            return '#02C39A';
-        }
-        else if(number > 1000 && number <= 10000) {
-            return '#79DBAC';
-        }
-        else {
-            return '#F0F3BD';
-        }
-    }
+    let recoveredScale = d3.scaleThreshold()
+        .domain([1000, 10000, 40000, 55000, 70000, 85000, 100000])
+        .range([
+            '#f0f3bc',
+            '#79dbac',
+            '#02c39a',
+            '#01b698',
+            '#00a896',
+            '#019493',
+            '#028090',
+            '#05668d',
+        ]);
 
     //fecthes data from the source and calls load_country_data on the json file
     function getData() {
@@ -196,19 +154,19 @@
                             //console.log(countryArray[i].death)
                             //set the color based on the total number of deaths / recovered / confirmed-cases
                             if(stat == 'recovered') {
-                                color = getColorRecovered(countryArray[i].recovered);
+                                color = recoveredScale(countryArray[i].recovered);
                                 featureLayer.setStyle({fillColor : color});
                                 //binding statistics to the country as a popup!
                                 featureLayer.bindPopup('Name: ' + countryArray[i].name + '<br>' + 'total Deaths: ' + countryArray[i].death + '<br>' + 'total Recovered: ' + countryArray[i].recovered + '<br>' + 'total Confirmed Cases: ' + countryArray[i].confirmed);
                             }
                             else if(stat == 'confirmed') {
-                                color = getColorConfirmed(countryArray[i].confirmed);
+                                color = confirmedScale(countryArray[i].confirmed);
                                 featureLayer.setStyle({fillColor : color});
                                 //binding statistics to the country as a popup!
                                 featureLayer.bindPopup('Name: ' + countryArray[i].name + '<br>' + 'total Deaths: ' + countryArray[i].death + '<br>' + 'total Recovered: ' + countryArray[i].recovered + '<br>' + 'total Confirmed Cases: ' + countryArray[i].confirmed);
                             }
                             else {
-                                color = getColorDeaths(countryArray[i].death);
+                                color = deathScale(countryArray[i].death);
                                 featureLayer.setStyle({fillColor : color});
                                 //binding statistics to the country as a popup!
                                 featureLayer.bindPopup('Name: ' + countryArray[i].name + '<br>' + 'total Deaths: ' + countryArray[i].death + '<br>' + 'total Recovered: ' + countryArray[i].recovered + '<br>' + 'total Confirmed Cases: ' + countryArray[i].confirmed);
