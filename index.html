@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Final Project</title>
+  <meta charset="utf-8">
+  <script src="https://d3js.org/d3.v5.min.js"></script>
+  <script src="https://d3js.org/topojson.v1.min.js"></script>
+  <script src='https://api.mapbox.com/mapbox-gl-js/v1.7.0/mapbox-gl.js'></script>
+  <script src="libraries/jquery-3.4.1.min.js"></script>
+  <script src="index.js"></script>
+  <link href='https://fonts.googleapis.com/css?family=Roboto' rel='stylesheet'>
+  <link href='https://api.mapbox.com/mapbox-gl-js/v1.7.0/mapbox-gl.css' rel='stylesheet'/>
+  <link rel='stylesheet' type='text/css' href='index.css'>
+
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.6.0/dist/leaflet.css"
+  integrity="sha512-xwE/Az9zrjBIphAcBb3F6JVqxf46+CDLwfLMHloNu6KEQCAWi6HcDUbeOfBIptF7tcCzusKFjFw2yuvEpDL9wQ=="
+  crossorigin=""/>
+  <script src="https://unpkg.com/leaflet@1.6.0/dist/leaflet.js"
+    integrity="sha512-gZwIG9x3wUXg2hdXF6+rVkLF/0Vi9U8D2Ntg4Ga5I5BZpVkVxlJWbSQtXPSiUTtC0TjtGOmxa1AJPuV0CPthew=="
+    crossorigin=""></script>
+</head>
+<body>
+  <section class='header'>
+    <hr>
+    <h1>Covid-19 Statistics Map</h1>
+    <hr>
+  </section>
+  <section class='section1'>
+    <div id='map_area' class='r_border'>
+    </div>
+    <div class='button_section'>
+      <div class='btn_key'>
+        <p> Less </p>
+        <hr>
+        <p> More </p>
+      </div>
+      <a class="btn death_gradient" id='deaths'>Deaths</a>
+      <a class="btn confirmed_gradient" id='confirmed'>Confirmed Cases</a>
+      <a class="btn recovered_gradient" id='recovered'>Recovered</a>
+    </div>
+  </section>
+  <section class='header'>
+    <hr>
+    <h1> Covid_19 Visualizations </h1>
+    <hr>
+  </section>
+  <section class='section2'>
+    <div class='r_border' id='graph_area'>
+    </div>
+    <div class='button_section'>
+      <select id="countries">
+      </select>
+    </div>
+  </section>
+</body>
+</html>
