@@ -27,7 +27,7 @@
         this.confirmed = confirmed;
     }
 
-    var countryArray = []; //array of country objects
+    let countries = {};
     var mymap;
 
     let deathScale = d3.scaleThreshold()
@@ -82,11 +82,11 @@
 
     //creates a Country object from each key in the json data fetched and appends the object to an array.
     function loadCountryData(data) {
-        let country = null;
         Object.keys(data).forEach(countryName => {
-            country = data[countryName][data[countryName].length - 1];
-            countryArray.push(new Country(countryName, country.deaths, country.recovered, country.confirmed));
+            const {date, ...country} = data[countryName][data[countryName].length - 1];
+            countries[countryName] = country;
         });
+        console.log(countries);
     }
 
     function createMap() {
@@ -109,6 +109,7 @@
                 'type': 'geojson',
                 'data': countries
             });
+
             mymap.addLayer({
                 'id': 'countries-fill',
                 'type': 'fill',
