@@ -2,21 +2,21 @@
     window.addEventListener('load', init);
 
     function init() {
-        get_data();
+        getData();
         console.log(countryArray);
 
         //loading map for section1
-        load_map();
+        loadMap();
 
         //promise to load inthe data first then execute the visualization function for section2
         Promise.all([
             d3.csv('data/time_series_covid19_deaths_global.csv')])
-        .then(line_chart);
+        .then(lineChart);
 
         //intialize buttons
-        document.getElementById('confirmed').onclick = function() {load_map_data('confirmed', mymap)};
-        document.getElementById('recovered').onclick = function() {load_map_data('recovered', mymap)};
-        document.getElementById('deaths').onclick = function() {load_map_data('death', mymap)};
+        document.getElementById('confirmed').onclick = function() {loadMapData('confirmed', mymap)};
+        document.getElementById('recovered').onclick = function() {loadMapData('recovered', mymap)};
+        document.getElementById('deaths').onclick = function() {loadMapData('death', mymap)};
     }
 
     //Country Object
@@ -112,18 +112,18 @@
     }
 
     //fecthes data from the source and calls load_country_data on the json file
-    function get_data() {
+    function getData() {
         fetch("https://pomber.github.io/covid19/timeseries.json")
             .then(response => response.json())
             .then(data => {
                 //console.log(data); //will print the json object
-                load_country_data(data);
+                loadCountryData(data);
             })
             .catch(err => console.error(err));
     }
 
     //creates a Country object from each key in the json data fetched and appends the object to an array.
-    function load_country_data(data) {
+    function loadCountryData(data) {
         let json_Length = Object.keys(data).length; //amount of countrys
         let c_keys = Object.keys(data); //list of the keys
         //console.log(c_keys);
@@ -150,7 +150,7 @@
         }
     }
 
-    function load_map() {
+    function loadMap() {
         //by default the map will load based on the number of Deaths
         mymap = L.map('map_area', {
             center: [24.505, -0.09],
@@ -167,10 +167,10 @@
             accessToken: 'pk.eyJ1Ijoia2VubmVkeTE1IiwiYSI6ImNqdWlnZmNrNTFhNWo0M3Vqd2s1d3M4dWkifQ.kXdDtWHyleWospgGzCmwIg'
         }).addTo(mymap);
 
-        load_map_data('death', mymap)
+        loadMapData('death', mymap)
     }
 
-    function load_map_data(stat, mymap) {
+    function loadMapData(stat, mymap) {
         var stat = stat;
 
         //checks if there is already a datalayer added to the map
@@ -222,7 +222,7 @@
         });
     }
 
-    function line_chart(data) {
+    function lineChart(data) {
 
         var data = data;
         var data_array = [];
@@ -262,11 +262,11 @@
         svg.append("g")
             .call(d3.axisLeft(y));
 
-        create_line(svg, data, column_names, x, y); //function that draws the line
+        createLine(svg, data, column_names, x, y); //function that draws the line
 
     }
 
-    function create_line(svg, data, column_names, x, y, country) {
+    function createLine(svg, data, column_names, x, y, country) {
         var country_data;
 
         if(country === undefined) {
