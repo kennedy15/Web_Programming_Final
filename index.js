@@ -116,34 +116,6 @@ function load_country_data(data) {
         let tmp_recovered = 0;
         let tmp_confirmed = 0;
 
-        //console.log(test[i]); // <this is how you would get the name of each country as a string
-        //console.log(data['Angola']); // <this is how you get to each country
-
-        //console.log(data[name][4]);
-        //console.log(data[name][4].deaths);
-
-        //so the json is not reporting daily numbers, its reporting the total number so this for loops is wrong.
-        /*
-        for(let i = 0; i < length; i++) {
-            tmp_deaths += data[name][i].deaths;
-            tmp_recovered += data[name][i].recovered;
-            tmp_confirmed += data[name][i].confirmed;
-
-            if(name == "US") {
-                console.log(tmp_deaths);
-                console.log(i);
-            }
-        }
-        */
-
-        //fill in the country object with the data!
-        /*
-        tmp.name = name;
-        tmp.death = tmp_deaths;
-        tmp.confirmed = tmp_confirmed;
-        tmp.recovered = tmp_recovered;
-        */
-
         //length = the last day which has the most up to date numbers
         tmp.name = name;
         tmp.death = data[name][length-1].deaths;
@@ -155,11 +127,6 @@ function load_country_data(data) {
 
         countryArray.push(tmp); //add the new object to an array to keep track
     }
-
-    //countryArray.forEach(state => console.log(state.death)); //debugging
-    //console.log(countryArray[0].death);
-    //console.log(countryArray[4].death);
-
 }
 
 function load_map() {
@@ -297,13 +264,10 @@ function create_line(svg, data, column_names, x, y, country) {
 
     console.log(country_data);
 
-    let i = 4;
-    // format the data
-    country_data.forEach(function(d) {
+    for (let i = 4; i < country_data.length; i++) {
         d.date = parseTime(column_names[i]);
         d.death = +d.column_names[i];
-        i++
-    });
+    }
 
 
     // Scale the range of the data
