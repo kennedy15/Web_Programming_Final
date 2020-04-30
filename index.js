@@ -180,7 +180,7 @@
         countryData.features.forEach(d => {
             let countryName = d.properties['ADMIN'];
             if (countryName in countries) {
-               d.properties['fillColor'] = scale(countries[countryName].deaths);
+               d.properties['fillColor'] = scale(countries[countryName][stat]);
             }
             else {
                 d.properties['fillColor'] = 'rgba(0, 0, 0, 0)';
@@ -193,8 +193,6 @@
         time_data_deaths = data[0];
         time_data_recovered = data[1];
 
-        console.log(time_data_deaths);
-
         let list = [];
 
         for(let i = 0; i < time_data_deaths.length; i++) {
@@ -202,8 +200,6 @@
                 list.push(time_data_deaths[i].Country);
             }
         }
-
-        console.log(list);
 
         let dropdown = document.getElementById('countries');
 
@@ -216,8 +212,6 @@
         }
 
         prepData(time_data_deaths, time_data_recovered);
-
-        //lineChart(time_data_deaths);
     }
 
     function prepData(death, recovered, country) {
@@ -234,13 +228,9 @@
 
         if(country === undefined) {
             country = "US"; //setting default
-            // console.log(country);
         }
 
-        //console.log(data);
         let length = deaths.length;
-
-        //country_data.push('date, number')
 
         for(let i = 0; i < length; i++) {
             if(deaths[i].Country == country) {
@@ -282,52 +272,36 @@
 
         death_numbers.splice(0, 0, "deaths");
         recovered_numbers.splice(0, 0, "recovered");
-        //dates.splice(0,0,"dates");
-
-        //console.log(death_numbers);
-        //console.log(recovered_numbers);
-
-        //let consolidate = [death_numbers, recovered_numbers, confirmed_numbers];
 
         lineChart(death_numbers, recovered_numbers, dates);
 
     }
 
     function lineChart(deaths, recovered, dates) {
-
-        console.log(deaths);
-        console.log(recovered);
-
         var chart = c3.generate({
+            padding: {
+                right: 60,
+            },
             data: {
                 columns: [
-                    deaths,
-                    recovered,
-                ],
-                axes: {
-                    deaths: 'y',
-                    recovered: 'y2'
-                }
+                    ['deaths', ...deaths],
+                    ['recovered', ...recovered],
+                ]
             },
             axis: {
-                y: {
-                    label: 'deaths',
-                    show: true
-                },
-                y2: {
-                    label: 'recovered',
-                    show: true
-                },
                 x: {
-                    label: 'Dates',
-                    tick: {
-                        values: [dates],
+                    show: false
+                }
+            },
+            tooltip: {
+                format: {
+                    title: function(d) {
+                        return dates[d];
                     }
                 }
             }
         });
 
         chart.load();
-
     }
 })();
