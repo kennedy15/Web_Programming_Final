@@ -1,0 +1,131 @@
+html {
+    background-color: rgb(25, 26, 26);
+    font-family: 'Roboto';
+}
+
+h1 {
+    font-size: 28px;
+    color: #ffffff;
+}
+
+hr {
+    width: 30%;
+    color: #ffffff;
+}
+
+.header {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+
+.section1 {
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#map_area {
+    width: 1400px;
+    height: 800px;
+    background-color: rgb(25, 26, 26);
+}
+
+#chart {
+    width: 1400px;
+    height: 800px;
+}
+
+.c3-axis-y text, label {
+   fill: #FAFAFA;
+   font-size:12px;
+}
+.c3-axis-y2 text, label {
+   fill: #FAFAFA;
+   font-size:12px;
+}
+.c3-axis-x text, label {
+    font-size:12px;
+    fill: #FAFAFA;
+}
+
+.c3-legend-item {
+    fill: #fafafa;
+    font-size:14px;
+}
+
+.section2 {
+    height: 90vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.btn {
+    display:inline-block;
+    border-radius: 0.4rem;
+    text-decoration: none;
+    color: #FFFFFF;
+    text-align: center;
+    padding-left: 2rem;
+    padding-top: .9rem;
+    padding-right: 2rem;
+    padding-bottom: .9rem;
+    /*background-color:#2979FF;*/
+    /*box-shadow: 0 4px 8px 0 #ffffff, 0 6px 8px 0 #fafafa;*/
+}
+
+.btn:hover {
+    cursor: pointer;
+}
+
+.btn:active {
+    box-shadow:inset 0 0.6em 2em -0.3em rgba(0,0,0,0.15),inset 0 0 0em 0.05em rgba(255,255,255,0.12);
+}
+
+.button_section {
+    padding-left: 1rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height:  250px;
+}
+
+.r_border {
+    border: 3px solid #ffffff; /* redish-pink >#f55668  more red > #f14e4e*/
+    border-radius: 15px;
+}
+
+.bar {
+    fill: steelblue;
+}
+
+.confirmed_gradient {
+    background-image: linear-gradient(to right, #ffa600 0%, #d45087 26%, #665191 52%, #003f5c 100%);
+}
+
+.confirmed_gradient:hover {
+    background-position: left center;
+}
+
+.death_gradient {
+    background-image: linear-gradient(to right, #FFEDA0 0%, #FEB24C 26%, #FC4E2A 52%, #800026 100%);
+}
+
+.recovered_gradient {
+    background-image: linear-gradient(to right, #F0F3BD 0%, #02C39A 26%, #00A896 52%, #05668D 100%);
+}
+
+.btn_key {
+    color: #ffffff;
+    display: flex;
+    justify-content: center;
+    align-items: middle;
+}
+
+.btn_hr {
+    color: #ffffff;
+    flex-grow: 1;
+}
