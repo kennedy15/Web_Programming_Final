@@ -2,7 +2,10 @@
     window.addEventListener('load', init);
 
     function init() {
+        //pulling data with fetch
         getData();
+
+        //creating the map
         createMap();
 
         //promise to load inthe data first then execute the visualization function for section2
@@ -11,24 +14,31 @@
             d3.csv('data/time_series_covid19_recovered_global.csv')])
         .then(processData);
 
+        //adding event listeners to buttons in section 1
         document.getElementById('deaths').addEventListener('click', () => {toggleMap('deaths')});
         document.getElementById('confirmed').addEventListener('click', () => {toggleMap('confirmed')});
         document.getElementById('recovered').addEventListener('click', () => {toggleMap('recovered')});
 
+        //addeding a onchange function to the selection in section 2
         document.getElementById('countries').onchange=function() {
             var selection = this.value;
             prepData(time_data_deaths, time_data_recovered, selection);
         };
     }
 
+    //intializing variables for later
     var time_data_deaths;
     var time_data_confirmed;
     var time_data_recovered;
 
+    //dictionary to hold the country objects for the world map
     let countries = {};
     let countryData = null;
+
+    //variable for the mapbox map
     var mymap;
 
+    //color scale for death numbers
     let deathScale = d3.scaleThreshold()
         .domain([450, 1000, 4000, 7000, 10000, 20000, 35000])
         .range([
@@ -42,6 +52,7 @@
             '#800026',
         ]);
 
+    //color scale for confirmed cases numbers
     let confirmedScale = d3.scaleThreshold()
         .domain([950, 8500, 25000, 85000, 150000, 350000, 500000])
         .range([
@@ -55,6 +66,7 @@
             '#003f5c',
         ]);
 
+    //color scale for recovered numbers
     let recoveredScale = d3.scaleThreshold()
         .domain([1000, 10000, 40000, 55000, 70000, 85000, 100000])
         .range([
@@ -87,6 +99,7 @@
         });
     }
 
+    //creates the world map with mapbox
     function createMap() {
         let center = [24.505, -0.090];
         mapboxgl.accessToken = 'pk.eyJ1IjoiamFnb2R3aW4iLCJhIjoiY2lnOGQxaDhiMDZzMXZkbHYzZmN4ZzdsYiJ9.Uwh_L37P-qUoeC-MBSDteA';
@@ -136,6 +149,7 @@
             });
         });
 
+        //displays the statistics for each country on click
         mymap.on('click', 'countries-fill', function(d) {
             let countryName = d.features[0].properties['ADMIN'];
             if (countryName in countries) {
@@ -163,6 +177,7 @@
         });
     }
 
+    //handles switching out the scales on the map
     function toggleMap(stat) {
         let scale = null;
         switch (stat) {
@@ -189,6 +204,7 @@
         mymap.getSource('countries-source').setData(countryData);
     }
 
+    //processes the data for the multi - line graph
     function processData(data) {
         time_data_deaths = data[0];
         time_data_recovered = data[1];
@@ -277,6 +293,7 @@
 
     }
 
+    //generates the line graph with the data handed in
     function lineChart(deaths, recovered, dates) {
         var chart = c3.generate({
             padding: {
