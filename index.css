@@ -73,8 +73,6 @@ hr {
     padding-top: .9rem;
     padding-right: 2rem;
     padding-bottom: .9rem;
-    /*background-color:#2979FF;*/
-    /*box-shadow: 0 4px 8px 0 #ffffff, 0 6px 8px 0 #fafafa;*/
 }
 
 .btn:hover {
@@ -94,7 +92,7 @@ hr {
 }
 
 .r_border {
-    border: 3px solid #ffffff; /* redish-pink >#f55668  more red > #f14e4e*/
+    border: 3px solid #ffffff;
     border-radius: 15px;
 }
 
@@ -122,7 +120,7 @@ hr {
     color: #ffffff;
     display: flex;
     justify-content: center;
-    align-items: middle;
+    align-items: center;
 }
 
 .btn_hr {
