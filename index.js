@@ -124,28 +124,30 @@
                 }
             });
 
-            mymap.addSource('countries-source', {
-                'type': 'geojson',
-                'data': countryData
-            });
-
-            mymap.addLayer({
-                'id': 'countries-fill',
-                'type': 'fill',
-                'source': 'countries-source',
-                'paint': {
-                    'fill-color': ['get', 'fillColor'],
-                    'fill-opacity': 0.8,
-                }
-            });
-
-            mymap.addLayer({
-                'id': 'countries-boundary',
-                'type': 'line',
-                'source': 'countries-source',
-                'paint': {
-                    'line-color': 'rgb(0, 0, 0)'
-                }
+            mymap.on('load', function() {
+                mymap.addSource('countries-source', {
+                    'type': 'geojson',
+                    'data': countryData
+                });
+    
+                mymap.addLayer({
+                    'id': 'countries-fill',
+                    'type': 'fill',
+                    'source': 'countries-source',
+                    'paint': {
+                        'fill-color': ['get', 'fillColor'],
+                        'fill-opacity': 0.8,
+                    }
+                });
+    
+                mymap.addLayer({
+                    'id': 'countries-boundary',
+                    'type': 'line',
+                    'source': 'countries-source',
+                    'paint': {
+                        'line-color': 'rgb(0, 0, 0)'
+                    }
+                });
             });
         });
 
